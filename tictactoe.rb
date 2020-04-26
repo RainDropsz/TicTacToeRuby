@@ -5,78 +5,75 @@ the board is displayed in between turns.
 =end
 
 class Game
-
-  attr_reader :displ_array
-
   def initialize()
-
-    puts "Let's Play 2-Player Tic Tac Toe!"
-
     player1 = Players.new()
     player2 = Players.new()
+    @players = [player1, player2]
+    @board = [0, "_", "_", "_", "_", "_", "_", " ", " ", " "]
+    @turn = 0
 
-    # Print instructional board
-    @displ_array = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    puts "Let's Play 2-Player Tic Tac Toe!"
     print_board
 
-    # Print Tic-Tac-Toe board
-    @displ_array = [0]
-    for i in 1..3 do
-      for j in 1..3 do 
-        i < 3 ? @displ_array << "_" : @displ_array << " "
-      end
-    end
+    while board_is_not_full do
+      active_player = @players[@turn]
+      move = active_player.get_move
 
-    print_board
-
-    # Alternate Turns
-    for i in 1..9 do
-      if i.odd?  
-        move = player1.get_move.to_i 
-
-        if is_not_taken(move)
-          @displ_array[ move ] = player1.marker
-          player1.add_move(move)
-
-          if player1.winner? 
-            puts "Congratulations! Player 1 wins!"
-            return
-          end
-        end
+      if spot_is_empty(move)
+        @board [move] = active_player.marker
         print_board
-          
+
+        if winner?(move, active_player.marker)
+          active_player.print_winner
+          return
+        end
       else
-        move = player2.get_move.to_i
-        if is_not_taken(move)
-          @displ_array[ move ] = player2.marker
-          player2.add_move(move)
-
-          if player2.winner? 
-            puts "Congratulations! Player 2 wins!"
-            return
-          end
-        end
-        print_board
-
+        puts "Sorry, spot is taken"
       end
+
+      next_turn
     end
 
     puts "It's a tie!"
 
   end
 
-  def is_not_taken(position)
-    @displ_array[position] != "x" && @displ_array[position] != "o"
+  def winner?(position, marker)
+    winners = [ "123", "456", "789", "147", "258", "369", "159", "357"]
+    relevant_winners =  winners.select { |combo| combo.include?(position.to_s)}
+
+    relevant_winners.each do |string|
+      result = true
+
+      result = result && 
+        @board[ string[0].to_i ] == marker &&
+        @board[ string[1].to_i ] == marker &&
+        @board[ string[2].to_i ] == marker 
+      
+      if result 
+        return true
+      end
+    end
+
+    false
+  end
+
+  def next_turn
+    @turn = (@turn + 1) % 2
+  end
+
+  def board_is_not_full
+    @board.include?("_") || @board.include?(" ")
+  end
+
+  def spot_is_empty(position)
+    @board[position] == "_" || @board[position] == " "
   end
 
   def print_board()
-    string = ""
-    for i in 1..9 do
-       i % 3 == 0 ? 
-       string = string + @displ_array[i].to_s + "\n" :
-       string = string + @displ_array[i].to_s + "|"
-    end
-    puts string
+    puts "   #{@board[1]}|#{@board[2]}|#{@board[3]}     1|2|3"
+    puts "   #{@board[4]}|#{@board[5]}|#{@board[6]}     4|5|6"
+    puts "   #{@board[7]}|#{@board[8]}|#{@board[9]}     7|8|9"
   end
 end
 
@@ -89,29 +86,15 @@ class Players
     @@count += 1
     @player_number = @@count
     @@count.odd? ? @marker = "x" : @marker = "o"
-    @moves_array = []
+  end
+
+  def print_winner
+    puts "Congratulations! Player #{@player_number} wins!"
   end
 
   def get_move()
     puts "Player #{@player_number}'s turn, place your #{@marker}"
-    move = gets.chomp
-  end
-
-  def add_move(move)
-    @moves_array << move
-  end
-
-  def winner?()
-    winners = [ 123, 456, 789, 147, 258, 369, 159, 357]
-    moves_string = @moves_array.sort.join("")
-
-    winners.each do |combo|
-      if moves_string.include?(combo.to_s) 
-        return true
-      end
-    end
-
-    return false
+    move = gets.chomp.to_i
   end
 
 end
