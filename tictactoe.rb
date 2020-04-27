@@ -28,7 +28,7 @@ class Game
           return
         end
       else
-        puts "Sorry, spot is taken"
+        puts "Sorry, spot is not available."
       end
 
       next_turn
