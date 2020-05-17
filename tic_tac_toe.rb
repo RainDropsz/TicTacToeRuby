@@ -30,7 +30,7 @@ class TicTacToe
 
   def play_game
     until @board.full?
-      @board.place_move(player, gets_move(player))
+      @board.place_move(player[0], gets_move(player[0]))
       winner = winner?(player.marker)
       break if winner
 
@@ -39,10 +39,6 @@ class TicTacToe
 
     print_win_or_tie(winner, player)
     TicTacToe.new
-  end
-
-  def player
-    @players[0]
   end
 
   def print_welcome
