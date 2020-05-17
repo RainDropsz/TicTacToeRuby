@@ -2,6 +2,8 @@
 
 Tic Tac Toe created with Ruby 2.6.5
 
+Play the game at [https://repl.it/@RainDropsz/TicTacToeRuby](https://repl.it/@RainDropsz/TicTacToeRuby)
+
 **tic_tac_toe.rb** contains the gameplay.  
   Methods: change_players, gets_move, play_game,   
            print_win_or_tie, print_welcome, winner?  
